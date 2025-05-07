@@ -1,7 +1,7 @@
 // src/scenes/BootScene.js
 import { TextureLoader } from 'three';
 import StartScene        from './StartScene.js';
-import Collision          from '../utils/Collision.js';
+import Collision         from '../utils/Collision.js';
 
 export default class BootScene {
   constructor(game) {
@@ -20,10 +20,10 @@ export default class BootScene {
       furniture:         '/assets/sprites/furniture.png',
       start_bg:          '/assets/ui/start_background.png',
       title_card_bg:     '/assets/ui/title_card_bg.png',
-      win_bg:            '/assets/ui/win_background.png'
+      win_bg:            '/assets/ui/win_background.png',
+      gameover_bg:       '/assets/ui/gameover.png'
     };
 
-    // allow Collision to access textureMaps
     Collision.game = this.game;
 
     const entries = Object.entries(assets);
@@ -34,10 +34,10 @@ export default class BootScene {
         texture.name = key;
         this.game.textures[key] = texture;
 
-        // build an alpha-map for per-pixel collision
+        // build alpha map
         const img = texture.image;
         const canvas = document.createElement('canvas');
-        canvas.width  = img.width;
+        canvas.width = img.width;
         canvas.height = img.height;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0);
