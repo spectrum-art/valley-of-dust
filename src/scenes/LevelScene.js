@@ -1,3 +1,4 @@
+// src/scenes/LevelScene.js
 import * as THREE from 'three';
 import Dust from '../entities/Dust.js';
 import Cleaner from '../entities/Cleaner.js';
@@ -17,17 +18,15 @@ export default class LevelScene {
   init() {
     this.scene = new THREE.Scene();
 
-    // show level title card
+    // Title card & overlay
     this.title = new THREE.Sprite(
       new THREE.SpriteMaterial({ map: this.game.textures.title_card_bg })
     );
     this.title.scale.set(this.game.width, this.game.height, 1);
-    this.title.position.set(this.game.width / 2, this.game.height / 2, 0);
+    this.title.position.set(this.game.width/2, this.game.height/2, 0);
     this.scene.add(this.title);
 
-    // overlay level number
-    const overlay = document.getElementById('overlay');
-    overlay.innerHTML = `
+    document.getElementById('overlay').innerHTML = `
       <div style="
         position:absolute;
         top:50%;
@@ -45,15 +44,15 @@ export default class LevelScene {
   }
 
   setupLevel() {
-    // clear overlay and title
+    // clear overlay & remove title
     document.getElementById('overlay').innerHTML = '';
     this.scene.remove(this.title);
 
-    // load level data
+    // load config
     const cfg = this.game.assetsData.levels[this.level - 1];
     this.threshold = cfg.dustThreshold;
 
-    // obstacles
+    // furniture obstacles
     this.obstacles = [];
     cfg.furniture.forEach(o => {
       const mat = new THREE.SpriteMaterial({ map: this.game.textures.furniture });
@@ -67,7 +66,7 @@ export default class LevelScene {
     // player
     this.player = new Player(this.game, this.game.width/2, this.game.height/2);
 
-    // dust
+    // dusts
     this.dusts = [];
     for (let i = 0; i < this.threshold; i++) this.spawnDust();
 
@@ -80,8 +79,16 @@ export default class LevelScene {
   }
 
   spawnDust() {
-    const x = Math.random() * this.game.width;
-    const y = Math.random() * this.game.height;
+    let x, y, safe;
+    do {
+      x = Math.random() * this.game.width;
+      y = Math.random() * this.game.height;
+      // ensure not on any obstacle
+      safe = !this.obstacles.some(o =>
+        Math.abs(x - o.x) < (16 + o.width/2) &&
+        Math.abs(y - o.y) < (16 + o.height/2)
+      );
+    } while (!safe);
     this.dusts.push(new Dust(this.game, x, y));
   }
 
@@ -95,41 +102,48 @@ export default class LevelScene {
     this.player.update(delta);
     this.cleaners.forEach(c => c.update(delta, this.player));
 
-    // player + dust
-    this.dusts.forEach((d, i) => {
+    // player + dust collisions
+    for (let i = 0; i < this.dusts.length; i++) {
+      const d = this.dusts[i];
       if (Collision.checkSpriteCollision(this.player.sprite, d.sprite)) {
         this.scene.remove(d.sprite);
         this.dusts.splice(i, 1);
-        this.player.grow();                 // <-- grow on collect
+        this.player.grow();
         this.dustCollected++;
         this.spawnDust();
+
         if (this.dustCollected >= this.threshold) {
           if (this.level < 5) {
             this.game.startScene(new LevelScene(this.game, this.level + 1));
+            return;  // **exit to avoid double-init bug**
           } else {
             this.game.startScene(new WinScene(this.game));
+            return;
           }
         }
       }
-    });
+    }
 
-    // cleaner + player
-    this.cleaners.forEach(c => {
+    // cleaner + player collision
+    for (const c of this.cleaners) {
       if (Collision.checkSpriteCollision(c.sprite, this.player.sprite)) {
         this.game.startScene(new StartScene(this.game));
+        return;
       }
-    });
+    }
 
     // cleaner + dust
-    this.cleaners.forEach(c =>
-      this.dusts.forEach((d, i) => {
+    this.cleaners.forEach(c => {
+      for (let i = 0; i < this.dusts.length; i++) {
+        const d = this.dusts[i];
         if (Collision.checkSpriteCollision(c.sprite, d.sprite)) {
           this.scene.remove(d.sprite);
           this.dusts.splice(i, 1);
           this.spawnDust();
+          break;
         }
-      })
-    );
+      }
+    });
   }
 
   render() {
