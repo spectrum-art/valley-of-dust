@@ -11,39 +11,67 @@ export default class LevelScene {
     this.game = game;
     this.level = level;
     this.dustCollected = 0;
+    this.obstacles = [];
   }
 
   init() {
     this.scene = new THREE.Scene();
-    // Title card
+
+    // show level title card
     this.title = new THREE.Sprite(
       new THREE.SpriteMaterial({ map: this.game.textures.title_card_bg })
     );
     this.title.scale.set(this.game.width, this.game.height, 1);
-    this.title.position.set(this.game.width/2, this.game.height/2, 0);
+    this.title.position.set(this.game.width / 2, this.game.height / 2, 0);
     this.scene.add(this.title);
+
+    // overlay level number
+    const overlay = document.getElementById('overlay');
+    overlay.innerHTML = `
+      <div style="
+        position:absolute;
+        top:50%;
+        width:100%;
+        text-align:center;
+        font-family:sans-serif;
+        font-size:48px;
+        color:white;
+        text-shadow:0 0 5px black;">
+        Level ${this.level}
+      </div>`;
+
     this.timer = 0;
     this.playing = false;
   }
 
   setupLevel() {
+    // clear overlay and title
+    document.getElementById('overlay').innerHTML = '';
+    this.scene.remove(this.title);
+
+    // load level data
     const cfg = this.game.assetsData.levels[this.level - 1];
     this.threshold = cfg.dustThreshold;
 
-    // furniture (decorative)
+    // obstacles
+    this.obstacles = [];
     cfg.furniture.forEach(o => {
       const mat = new THREE.SpriteMaterial({ map: this.game.textures.furniture });
       const s = new THREE.Sprite(mat);
       s.scale.set(o.width, o.height, 1);
       s.position.set(o.x, o.y, 0);
       this.scene.add(s);
+      this.obstacles.push(o);
     });
 
+    // player
     this.player = new Player(this.game, this.game.width/2, this.game.height/2);
 
+    // dust
     this.dusts = [];
     for (let i = 0; i < this.threshold; i++) this.spawnDust();
 
+    // cleaners
     this.cleaners = cfg.cleanerSpawns.map(sp =>
       new Cleaner(this.game, sp.x, sp.y, this.level)
     );
@@ -59,10 +87,8 @@ export default class LevelScene {
 
   update(delta) {
     if (!this.playing) {
-      if ((this.timer += delta) > 2) {
-        this.scene.remove(this.title);
-        this.setupLevel();
-      }
+      this.timer += delta;
+      if (this.timer > 2) this.setupLevel();
       return;
     }
 
@@ -74,6 +100,7 @@ export default class LevelScene {
       if (Collision.checkSpriteCollision(this.player.sprite, d.sprite)) {
         this.scene.remove(d.sprite);
         this.dusts.splice(i, 1);
+        this.player.grow();                 // <-- grow on collect
         this.dustCollected++;
         this.spawnDust();
         if (this.dustCollected >= this.threshold) {
