@@ -1,0 +1,79 @@
+{
+  "levels": [
+    {
+      "dustThreshold": 5,
+      "furniture": [
+        { "x": 100, "y": 100, "width": 128, "height": 64 },
+        { "x": 300, "y": 200, "width": 64, "height": 128 },
+        { "x": 500, "y": 400, "width": 128, "height": 64 }
+      ],
+      "cleanerSpawns": [
+        { "x": 50, "y": 550 },
+        { "x": 750, "y": 50 }
+      ]
+    },
+    {
+      "dustThreshold": 7,
+      "furniture": [
+        { "x": 150, "y": 150, "width": 128, "height": 64 },
+        { "x": 350, "y": 250, "width": 64, "height": 128 },
+        { "x": 550, "y": 450, "width": 128, "height": 64 }
+      ],
+      "cleanerSpawns": [
+        { "x": 50, "y": 550 },
+        { "x": 750, "y": 50 },
+        { "x": 400, "y": 300 }
+      ]
+    },
+    {
+      "dustThreshold": 9,
+      "furniture": [
+        { "x": 100, "y": 100, "width": 128, "height": 64 },
+        { "x": 300, "y": 200, "width": 64, "height": 128 },
+        { "x": 500, "y": 400, "width": 128, "height": 64 },
+        { "x": 600, "y": 150, "width": 64, "height": 128 }
+      ],
+      "cleanerSpawns": [
+        { "x": 50, "y": 550 },
+        { "x": 750, "y": 50 },
+        { "x": 400, "y": 300 },
+        { "x": 200, "y": 400 }
+      ]
+    },
+    {
+      "dustThreshold": 11,
+      "furniture": [
+        { "x": 150, "y": 100, "width": 128, "height": 64 },
+        { "x": 350, "y": 200, "width": 64, "height": 128 },
+        { "x": 550, "y": 400, "width": 128, "height": 64 },
+        { "x": 650, "y": 250, "width": 64, "height": 128 },
+        { "x": 400, "y": 100, "width": 128, "height": 64 }
+      ],
+      "cleanerSpawns": [
+        { "x": 50, "y": 550 },
+        { "x": 750, "y": 50 },
+        { "x": 400, "y": 300 },
+        { "x": 200, "y": 400 },
+        { "x": 600, "y": 400 }
+      ]
+    },
+    {
+      "dustThreshold": 13,
+      "furniture": [
+        { "x": 100, "y": 150, "width": 128, "height": 64 },
+        { "x": 300, "y": 250, "width": 64, "height": 128 },
+        { "x": 500, "y": 450, "width": 128, "height": 64 },
+        { "x": 650, "y": 350, "width": 64, "height": 128 },
+        { "x": 450, "y": 200, "width": 128, "height": 64 },
+        { "x": 250, "y": 450, "width": 64, "height": 128 }
+      ],
+      "cleanerSpawns": [
+        { "x": 50, "y": 550 },
+        { "x": 750, "y": 50 },
+        { "x": 400, "y": 300 },
+        { "x": 200, "y": 400 },
+        { "x": 600, "y": 400 }
+      ]
+    }
+  ]
+}
