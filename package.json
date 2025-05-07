@@ -1,3 +1,4 @@
+// package.json
 {
     "name": "valley-of-dust",
     "version": "1.0.0",
@@ -9,7 +10,8 @@
     },
     "dependencies": {
       "three": "^0.152.2",
-      "dat.gui": "^0.7.9"
+      "dat.gui": "^0.7.9",
+      "nipplejs": "^0.8.0"
     },
     "devDependencies": {
       "vite": "^4.0.0"
